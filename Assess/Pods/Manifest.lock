@@ -1,0 +1,22 @@
+PODS:
+  - PaginatedTableView (1.0.1)
+  - SDWebImage (5.9.1):
+    - SDWebImage/Core (= 5.9.1)
+  - SDWebImage/Core (5.9.1)
+
+DEPENDENCIES:
+  - PaginatedTableView
+  - SDWebImage (~> 5.0)
+
+SPEC REPOS:
+  trunk:
+    - PaginatedTableView
+    - SDWebImage
+
+SPEC CHECKSUMS:
+  PaginatedTableView: 294d9831d5ddf5c0dcfbb4a281d4fcfb8d12f55a
+  SDWebImage: a990c053fff71e388a10f3357edb0be17929c9c5
+
+PODFILE CHECKSUM: ab6084105369452db8d34921ec780861d6418ab4
+
+COCOAPODS: 1.9.1
