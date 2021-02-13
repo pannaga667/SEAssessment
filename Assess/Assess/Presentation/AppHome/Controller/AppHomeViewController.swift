@@ -10,15 +10,18 @@ import PaginatedTableView
 
 class AppHomeViewController: UIViewController {
     
+    @IBOutlet weak var backGroundImageView: UIImageView!
     @IBOutlet weak var appHomeTableView: PaginatedTableView!
     @IBOutlet weak var appHomeSearchBar: UISearchBar!
     @IBOutlet weak var photosButton: UIButton!
     @IBOutlet weak var videosButton: UIButton!
     @IBOutlet weak var favoritesButton: UIButton!
     
+    
     private var homeViewModel = AppHomeViewModel()
     var photos = [Photo]()
     var videos = [Video]()
+    var queryString = StringConstants.pullToRefresh
     
     var list = [Int]()
     class var instance: AppHomeViewController {
@@ -27,16 +30,17 @@ class AppHomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        appHomeTableView.register(UINib(nibName: "AppHomeTableViewCell", bundle: nil), forCellReuseIdentifier: "AppHomeTableViewCell")
+        appHomeTableView.register(UINib(nibName: StringConstants.appHomeCellID, bundle: nil), forCellReuseIdentifier: StringConstants.appHomeCellID)
         appHomeTableView.rowHeight = UITableView.automaticDimension
         appHomeTableView.paginatedDelegate = self
         appHomeTableView.paginatedDataSource = self
         appHomeTableView.enablePullToRefresh = true
-        appHomeTableView.pullToRefreshTitle = NSAttributedString(string: "Pull to Refresh")
+        appHomeTableView.pullToRefreshTitle = NSAttributedString(string: StringConstants.pullToRefresh)
         appHomeTableView.loadData(refresh: true)
         appHomeSearchBar.showsScopeBar = true
         appHomeSearchBar.delegate = self
-        self.homeViewModel.getPhotos(queryString: "Animal")
+        self.homeViewModel.getPhotos(queryString: StringConstants.queryString)
+        self.homeViewModel.getBannerData(queryString: "")
         self.setUpTableView()
     }
     
@@ -58,6 +62,14 @@ class AppHomeViewController: UIViewController {
                 
             }
         }
+        self.homeViewModel.bannerData.bind{ [unowned self] response in
+            DispatchQueue.main.async { [weak self] in
+                if let photos = response?.photos {
+                    self?.backGroundImageView.downloaded(from: photos[0].src?.small ?? "")
+                }
+            }
+        }
+        
     }
     
     
@@ -69,11 +81,9 @@ extension AppHomeViewController: PaginatedTableViewDelegate {
     }
     
     func loadMore(_ pageNumber: Int, _ pageSize: Int, onSuccess: ((Bool) -> Void)?, onError: ((Error) -> Void)?) {
-        // Call your api here
-        // Send true in onSuccess in case new data exists, sending false will disable pagination
         
-        // If page number is first, reset the list
-        if pageNumber == 1 { self.list = [Int]() }
+        self.homeViewModel.getPhotos(queryString: queryString)
+        if pageNumber == 1 { self.list = [Int]()}
         
         // else append the data to list
         let startFrom = (self.list.last ?? 0) + 1
@@ -95,8 +105,8 @@ extension AppHomeViewController: PaginatedTableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "AppHomeTableViewCell", for: indexPath) as? AppHomeTableViewCell else {
-            fatalError("The dequeued cell is not an instance of TableViewCell.")
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: StringConstants.appHomeCellID, for: indexPath) as? AppHomeTableViewCell else {
+            fatalError(StringConstants.error)
         }
         cell.configure(data: photos[indexPath.row])
         return cell
@@ -115,6 +125,7 @@ extension AppHomeViewController: UISearchBarDelegate{
     
     func searchBarSearchButtonClicked( _ searchBar: UISearchBar)
     {
+        queryString = searchBar.text ?? ""
         self.homeViewModel.getPhotos(queryString: searchBar.text ?? "")
     }
 }

@@ -6,5 +6,8 @@
 //
 
 struct StringConstants {
-    static let failure = "failure"
+    static let appHomeCellID = "AppHomeTableViewCell"
+    static let pullToRefresh = "Pull to Refresh"
+    static let queryString = "Animal"
+    static let error = "The dequeued cell is not an instance of TableViewCell."
 }

@@ -24,5 +24,12 @@ class AppHomeViewModel{
         })
         
     }
+    func getBannerData(queryString:String){
+        appHomeService.getBannerData(queryString: queryString,completion: { [weak self] results in
+            self?.bannerData.value = results
+        })
+        
+    }
+    
 }
 

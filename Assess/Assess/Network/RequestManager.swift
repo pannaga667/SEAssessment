@@ -9,9 +9,12 @@ import Foundation
 import UIKit
 class NetworkManager{
     func urlRequest<T: Decodable>(queryString:String,apiResource: APIResource,completion: @escaping (Result<T, Error>) -> ()){
+
+       let queryUrl = queryString != "" ? apiResource.urlString + "/search?query=\(queryString)" : apiResource.urlString
+//            let urlSrting = apiResource.urlString + "/search?query=\(queryString)"
+//        }
         
-        let urlSrting = apiResource.urlString + "/search?query=\(queryString)"
-        guard let url = URL(string: urlSrting) else { return}
+        guard let url = URL(string: queryUrl) else { return}
         var request = URLRequest(url: url)
         request.addValue("563492ad6f917000010000014d81d4a591944e72a91369c34061eda0", forHTTPHeaderField: "Authorization")
         
